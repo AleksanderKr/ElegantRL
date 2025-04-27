@@ -17,3 +17,7 @@ runs/
 # JetBrains folder
 .idea/
 .env-erl/
+
+# setup
+*.egg-info/
+build/

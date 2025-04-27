@@ -69,7 +69,8 @@ class AgentPPO(AgentBase):
                 ary_state, info_dict = env.reset()
             state = th.as_tensor(ary_state, dtype=th.float32, device=self.device).unsqueeze(0)
 
-            rewards[t] = reward
+            #rewards[t] = reward
+            rewards[t] = reward if isinstance(reward, th.Tensor) else th.tensor(reward, device=rewards.device)
             terminals[t] = terminal
             truncates[t] = truncate
 
@@ -118,7 +119,8 @@ class AgentPPO(AgentBase):
 
             state, reward, terminal, truncate, _ = env.step(convert(action))  # next_state
 
-            rewards[t] = reward
+            #rewards[t] = reward
+            rewards[t] = reward if isinstance(reward, th.Tensor) else th.tensor(reward, device=rewards.device)
             terminals[t] = terminal
             truncates[t] = truncate
 

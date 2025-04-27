@@ -474,7 +474,26 @@ class EvaluatorProc(Process):
         eval_env.close() if hasattr(eval_env, 'close') else None
         print("| Evaluator Closed", flush=True)
 
+# ---------------------------------------------------------------------
+# Back-compat shim for FinRL / old scripts
+# ---------------------------------------------------------------------
+def init_agent(args: "Config", gpu_id: int = 0, env=None):
+    """
+    Minimal replacement for the legacy `init_agent` helper that FinRL
+    expects.  It just builds the agent and (optionally) puts it on the
+    right GPU.
+    """
+    agent = args.agent_class(
+        args.net_dims, args.state_dim, args.action_dim,
+        gpu_id=gpu_id, args=args,
+    )
+    # load previous checkpoint if it exists
+    agent.save_or_load_agent(args.cwd, if_save=False)
 
+    # Old ElegantRL versions used to stuff env info here; keep the API
+    if env is not None:
+        agent.env = env
+    return agent
 '''render'''
 
 

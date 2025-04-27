@@ -342,3 +342,4 @@ def check_vec_env():
 
 if __name__ == '__main__':
     check_vec_env()
+Arguments = Config      # alias for FinRL
