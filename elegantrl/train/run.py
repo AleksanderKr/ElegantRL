@@ -49,7 +49,19 @@ def train_agent_single_process(args: Config):
         agent.save_or_load_agent(args.cwd, if_save=False)
 
     '''init agent.last_state'''
-    state, info_dict = env.reset()
+    #state, info_dict = env.reset()
+    state = env.reset()
+    if isinstance(state, tuple):
+        state = state[0]
+
+    if isinstance(state, th.Tensor):
+        s = state.cpu().numpy()
+    else:
+        s = np.asarray(state)
+
+    assert not np.isnan(s).any(), "1 NaN w stanie po reset()!"
+    assert np.isfinite(s).all(), "1 Inf/-Inf w stanie po reset()!"
+
     if args.num_envs == 1:
         assert state.shape == (args.state_dim,)
         assert isinstance(state, np.ndarray)
@@ -380,7 +392,17 @@ class Worker(Process):
             agent.save_or_load_agent(args.cwd, if_save=False)
 
         '''init agent.last_state'''
-        state, info_dict = env.reset()
+        #state, info_dict = env.reset()
+        state = env.reset()
+        if isinstance(state, tuple):
+            state = state[0]
+        if isinstance(state, th.Tensor):
+            s = state.cpu().numpy()
+        else:
+            s = np.asarray(state)
+
+        assert not np.isnan(s).any(), "2 NaN w stanie po reset()!"
+        assert np.isfinite(s).all(), "2 Inf/-Inf w stanie po reset()!"
         if args.num_envs == 1:
             assert state.shape == (args.state_dim,)
             assert isinstance(state, np.ndarray)

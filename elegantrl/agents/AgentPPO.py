@@ -372,6 +372,7 @@ class ActorPPO(th.nn.Module):
         action_avg = self.net(state)
         action_std = self.action_std_log.exp()
 
+        action_avg = th.nan_to_num(action_avg)
         dist = self.ActionDist(action_avg, action_std)
         action = dist.sample()
         logprob = dist.log_prob(action).sum(1)
